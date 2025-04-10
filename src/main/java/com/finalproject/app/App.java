@@ -5,5 +5,6 @@ public class App {
         System.out.println("Welcome to Final Project! Updated bug 3");
         System.out.println("Hello endpoint test!");
         System.out.println("status endpoint test!");
+        System.out.println("Bug 4");
     }
 }
