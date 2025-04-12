@@ -3,11 +3,10 @@
     "https://checkstyle.org/dtds/configuration_1_3.dtd">
 
 <module name="Checker">
-    <module name="TreeWalker">
-        <!-- Basic rules -->
-        <module name="FinalParameters"/>
-        <module name="FinalClass"/>
-        <module name="MissingJavadocMethod"/>
-        <module name="HideUtilityClassConstructor"/>
-    </module>
+  <module name="TreeWalker">
+    <module name="FinalParameters"/>
+    <module name="FinalClass"/>
+    <module name="MissingJavadocMethod"/>
+    <module name="HideUtilityClassConstructor"/>
+  </module>
 </module>
