@@ -7,7 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AppTest {
 
     @Test
-    public void testAppIsRunning() {
-        assertTrue(true, "The app should always run this test successfully");
+    public void testMainMethod() {
+        // Simulate calling the main method
+        App.main(new String[] {});
     }
 }
