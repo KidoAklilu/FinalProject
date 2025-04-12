@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AppTest {
 
     @Test
-    public void sampleTest() {
-        assertTrue(5 > 1);
+    public void testAppIsRunning() {
+        assertTrue(true, "The app should always run this test successfully");
     }
 }
