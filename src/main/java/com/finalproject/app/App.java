@@ -3,7 +3,7 @@ package com.finalproject.app;
 /**
  * Main application class.
  */
-public class App {
+public final class App {
 
     // Private constructor to prevent instantiation
     private App() {
@@ -15,7 +15,7 @@ public class App {
      *
      * @param args the command-line arguments
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         System.out.println("Welcome to Final Project! Updated bug 3");
         System.out.println("Hello endpoint test!");
         System.out.println("status endpoint test!");
