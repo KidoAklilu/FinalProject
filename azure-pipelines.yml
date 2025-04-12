@@ -29,3 +29,8 @@ steps:
     javaHomeOption: 'JDKVersion'
     jdkVersionOption: '1.11'
     mavenVersionOption: 'Default'
+
+    # Compile and run tests with coverage
+- script: mvn clean verify
+  displayName: 'Run tests with JaCoCo coverage'
+
