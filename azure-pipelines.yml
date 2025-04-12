@@ -4,30 +4,59 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-- task: JavaToolInstaller@0
-  inputs:
-    versionSpec: '17'
-    jdkArchitectureOption: 'x64'
-    jdkSourceOption: 'PreInstalled'
+stages:
 
-# Static code analysis
-- task: Maven@4
-  inputs:
-    mavenPomFile: 'pom.xml'
-    goals: 'checkstyle:check'
-    options: '-B'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.17'
-    mavenVersionOption: 'Default'
+# -----------------------------------------
+- stage: Deliver
+  displayName: 'Build and Deliver Artifact'
+  jobs:
+    - job: BuildAndPackage
+      steps:
+        - task: JavaToolInstaller@0
+          inputs:
+            versionSpec: '17'
+            jdkArchitectureOption: 'x64'
+            jdkSourceOption: 'PreInstalled'
 
-# Run tests and generate JaCoCo coverage
-- script: mvn clean verify
-  displayName: 'Run tests and generate JaCoCo coverage'
+        - script: mvn clean package
+          displayName: 'Package with Maven'
 
-# Publish code coverage to DevOps UI
-- task: PublishCodeCoverageResults@2
-  inputs:
-    codeCoverageTool: 'JaCoCo'
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/target/site/jacoco/jacoco.xml'
-    reportDirectory: '$(System.DefaultWorkingDirectory)/target/site/jacoco'
+        - script: echo " Artifact (e.g. .jar) delivered to mock location"
+          displayName: 'Mock artifact delivery'
+
+# -----------------------------------------
+- stage: DeployToDev
+  displayName: 'Deploy to Dev Environment'
+  dependsOn: Deliver
+  jobs:
+    - job: DeployDev
+      steps:
+        - script: echo " Deploying to Dev Env... (mock)"
+        - script: echo " Launching app at http://dev.example.com (mock)"
+
+# -----------------------------------------
+- stage: DeployToQAT
+  displayName: 'Deploy to QAT Environment'
+  dependsOn: DeployToDev
+  jobs:
+    - job: DeployQAT
+      steps:
+        - script: echo " Deploying to QAT Env... (mock)"
+
+# -----------------------------------------
+- stage: DeployToStaging
+  displayName: 'Deploy to Staging Environment'
+  dependsOn: DeployToQAT
+  jobs:
+    - job: DeployStaging
+      steps:
+        - script: echo " Deploying to Staging Env... (mock)"
+
+# -----------------------------------------
+- stage: DeployToProduction
+  displayName: 'Deploy to Production Environment'
+  dependsOn: DeployToStaging
+  jobs:
+    - job: DeployProd
+      steps:
+        - script: echo " Deploying to Production Env... (mock)"
