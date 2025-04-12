@@ -12,7 +12,7 @@ steps:
     jdkSourceOption: 'PreInstalled'
 
 # Static code analysis
-- task: Maven@3
+- task: Maven@4
   inputs:
     mavenPomFile: 'pom.xml'
     goals: 'checkstyle:check'
@@ -21,12 +21,12 @@ steps:
     jdkVersionOption: '1.17'
     mavenVersionOption: 'Default'
 
-# Run tests and generate coverage
+# Run tests and generate JaCoCo coverage
 - script: mvn clean verify
   displayName: 'Run tests and generate JaCoCo coverage'
 
-# Publish coverage to DevOps UI
-- task: PublishCodeCoverageResults@1
+# Publish code coverage to DevOps UI
+- task: PublishCodeCoverageResults@2
   inputs:
     codeCoverageTool: 'JaCoCo'
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/target/site/jacoco/jacoco.xml'
