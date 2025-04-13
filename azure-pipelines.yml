@@ -2,7 +2,7 @@ trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  name: Final  # use your self-hosted agent pool
 
 stages:
 
@@ -12,6 +12,8 @@ stages:
   jobs:
     - job: BuildAndPublish
       displayName: 'Build project and publish artifact'
+      pool:
+        name: Final
       steps:
         - task: JavaToolInstaller@0
           inputs:
@@ -32,6 +34,7 @@ stages:
             pathToPublish: 'target'
             artifactName: 'FinalProjectArtifact'
             publishLocation: 'Container'
+
 
 # ---------------------- Dev Deployment ----------------------
 - stage: DeployToDev
