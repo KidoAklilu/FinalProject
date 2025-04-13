@@ -1,6 +1,9 @@
 trigger:
 - main
 
+pool:
+  name: Final  # your CI agent pool
+
 stages:
 
 # ---------------------- Deliver Stage ----------------------
@@ -9,12 +12,10 @@ stages:
   jobs:
     - job: BuildAndPublish
       displayName: 'Build project and publish artifact'
-      pool:
-        name: Final
       steps:
         - script: |
             "C:\\Users\\user\\Downloads\\apache-maven-3.9.9-bin\\apache-maven-3.9.9\\bin\\mvn.cmd" clean package
-          displayName: 'Build using full Maven path'
+          displayName: 'Build with full Maven path'
 
         - task: PublishBuildArtifacts@1
           inputs:
@@ -22,78 +23,38 @@ stages:
             artifactName: 'FinalProjectArtifact'
             publishLocation: 'Container'
 
-# ---------------------- Dev Deployment ----------------------
+# ---------------------- Mock Dev Deployment ----------------------
 - stage: DeployToDev
-  displayName: 'Deploy to Dev Environment'
+  displayName: 'Simulate Deploy to Dev'
   dependsOn: Deliver
   jobs:
-    - deployment: DeployToDevGroup
-      displayName: 'Deploy using Dev Deployment Group'
-      environment:
-        name: Dev
-        resourceType: DeploymentGroup
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - download: current
-                artifact: FinalProjectArtifact
-              - script: echo "🚀 Deployed to Dev environment"
-                displayName: 'Simulate deployment'
+    - job: EchoDev
+      steps:
+        - script: echo "🚀 Simulating deployment to Dev environment"
 
-# ---------------------- QAT Deployment ----------------------
+# ---------------------- Mock QAT Deployment ----------------------
 - stage: DeployToQAT
-  displayName: 'Deploy to QAT Environment'
+  displayName: 'Simulate Deploy to QAT'
   dependsOn: DeployToDev
   jobs:
-    - deployment: DeployToQATGroup
-      displayName: 'Deploy using QAT Deployment Group'
-      environment:
-        name: QAT
-        resourceType: DeploymentGroup
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - download: current
-                artifact: FinalProjectArtifact
-              - script: echo "🧪 Deployed to QAT environment"
-                displayName: 'Simulate deployment'
+    - job: EchoQAT
+      steps:
+        - script: echo "🧪 Simulating deployment to QAT environment"
 
-# ---------------------- Staging Deployment ----------------------
+# ---------------------- Mock Staging Deployment ----------------------
 - stage: DeployToStaging
-  displayName: 'Deploy to Staging Environment'
+  displayName: 'Simulate Deploy to Staging'
   dependsOn: DeployToQAT
   jobs:
-    - deployment: DeployToStagingGroup
-      displayName: 'Deploy using Staging Deployment Group'
-      environment:
-        name: Staging
-        resourceType: DeploymentGroup
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - download: current
-                artifact: FinalProjectArtifact
-              - script: echo "🛠️ Deployed to Staging environment"
-                displayName: 'Simulate deployment'
+    - job: EchoStaging
+      steps:
+        - script: echo "🛠️ Simulating deployment to Staging environment"
 
-# ---------------------- Production Deployment ----------------------
+# ---------------------- Mock Production Deployment ----------------------
 - stage: DeployToProduction
-  displayName: 'Deploy to Production Environment'
+  displayName: 'Simulate Deploy to Production'
   dependsOn: DeployToStaging
   jobs:
-    - deployment: DeployToProdGroup
-      displayName: 'Deploy using Production Deployment Group'
-      environment:
-        name: Production
-        resourceType: DeploymentGroup
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - download: current
-                artifact: FinalProjectArtifact
-              - script: echo "🚨 Deployed to Production environment"
-                displayName: 'Simulate deployment'
+    - job: EchoProd
+      steps:
+        - script: echo "🚨 Simulating deployment to Production environment"
