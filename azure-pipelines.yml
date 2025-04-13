@@ -6,11 +6,12 @@ pool:
 
 stages:
 
-# -----------------------------------------
+# ---------------------- Deliver Stage ----------------------
 - stage: Deliver
-  displayName: 'Build and Deliver Artifact'
+  displayName: 'Build and Publish Artifact'
   jobs:
-    - job: BuildAndPackage
+    - job: BuildAndPublish
+      displayName: 'Build project and publish artifact'
       steps:
         - task: JavaToolInstaller@0
           inputs:
@@ -18,45 +19,92 @@ stages:
             jdkArchitectureOption: 'x64'
             jdkSourceOption: 'PreInstalled'
 
-        - script: mvn clean package
-          displayName: 'Package with Maven'
+        - task: Maven@4
+          inputs:
+            mavenPomFile: 'pom.xml'
+            goals: 'package'
+            javaHomeOption: 'JDKVersion'
+            jdkVersionOption: '1.17'
+            mavenVersionOption: 'Default'
 
-        - script: echo " Artifact (e.g. .jar) delivered to mock location"
-          displayName: 'Mock artifact delivery'
+        - task: PublishBuildArtifacts@1
+          inputs:
+            pathToPublish: 'target'
+            artifactName: 'FinalProjectArtifact'
+            publishLocation: 'Container'
 
-# -----------------------------------------
+# ---------------------- Dev Deployment ----------------------
 - stage: DeployToDev
   displayName: 'Deploy to Dev Environment'
   dependsOn: Deliver
   jobs:
-    - job: DeployDev
-      steps:
-        - script: echo " Deploying to Dev Env... (mock)"
-        - script: echo " Launching app at http://dev.example.com (mock)"
+    - deployment: DeployToDevGroup
+      displayName: 'Deploy using Dev Deployment Group'
+      environment:
+        name: Dev
+        resourceType: DeploymentGroup
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - download: current
+                artifact: FinalProjectArtifact
+              - script: echo "🚀 Deployed to Dev environment"
+                displayName: 'Simulate deployment'
 
-# -----------------------------------------
+# ---------------------- QAT Deployment ----------------------
 - stage: DeployToQAT
   displayName: 'Deploy to QAT Environment'
   dependsOn: DeployToDev
   jobs:
-    - job: DeployQAT
-      steps:
-        - script: echo " Deploying to QAT Env... (mock)"
+    - deployment: DeployToQATGroup
+      displayName: 'Deploy using QAT Deployment Group'
+      environment:
+        name: QAT
+        resourceType: DeploymentGroup
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - download: current
+                artifact: FinalProjectArtifact
+              - script: echo "🧪 Deployed to QAT environment"
+                displayName: 'Simulate deployment'
 
-# -----------------------------------------
+# ---------------------- Staging Deployment ----------------------
 - stage: DeployToStaging
   displayName: 'Deploy to Staging Environment'
   dependsOn: DeployToQAT
   jobs:
-    - job: DeployStaging
-      steps:
-        - script: echo " Deploying to Staging Env... (mock)"
+    - deployment: DeployToStagingGroup
+      displayName: 'Deploy using Staging Deployment Group'
+      environment:
+        name: Staging
+        resourceType: DeploymentGroup
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - download: current
+                artifact: FinalProjectArtifact
+              - script: echo "🛠️ Deployed to Staging environment"
+                displayName: 'Simulate deployment'
 
-# -----------------------------------------
+# ---------------------- Production Deployment ----------------------
 - stage: DeployToProduction
   displayName: 'Deploy to Production Environment'
   dependsOn: DeployToStaging
   jobs:
-    - job: DeployProd
-      steps:
-        - script: echo " Deploying to Production Env... (mock)"
+    - deployment: DeployToProdGroup
+      displayName: 'Deploy using Production Deployment Group'
+      environment:
+        name: Production
+        resourceType: DeploymentGroup
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - download: current
+                artifact: FinalProjectArtifact
+              - script: echo "🚨 Deployed to Production environment"
+                displayName: 'Simulate deployment'
