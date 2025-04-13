@@ -1,9 +1,6 @@
 trigger:
 - main
 
-pool:
-  name: Final  # use your self-hosted agent pool
-
 stages:
 
 # ---------------------- Deliver Stage ----------------------
@@ -15,26 +12,15 @@ stages:
       pool:
         name: Final
       steps:
-        - task: JavaToolInstaller@0
-          inputs:
-            versionSpec: '17'
-            jdkArchitectureOption: 'x64'
-            jdkSourceOption: 'PreInstalled'
-
-        - task: Maven@4
-          inputs:
-            mavenPomFile: 'pom.xml'
-            goals: 'package'
-            javaHomeOption: 'JDKVersion'
-            jdkVersionOption: '1.17'
-            mavenVersionOption: 'Default'
+        - script: |
+            "C:\\Users\\user\\Downloads\\apache-maven-3.9.9-bin\\apache-maven-3.9.9\\bin\\mvn.cmd" clean package
+          displayName: 'Build using full Maven path'
 
         - task: PublishBuildArtifacts@1
           inputs:
             pathToPublish: 'target'
             artifactName: 'FinalProjectArtifact'
             publishLocation: 'Container'
-
 
 # ---------------------- Dev Deployment ----------------------
 - stage: DeployToDev
